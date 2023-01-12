@@ -1,7 +1,7 @@
 const sqr = x => x * x;
 
 // cache
-const cache = fn => {
+const cacheDecorator = fn => {
   const storage = new Map();
 
   return x => {
@@ -19,8 +19,7 @@ const cache = fn => {
   };
 };
 
-const cachedSqr = cache(sqr);
-console.log(cachedSqr(10));
+const cachedSqr = cacheDecorator(sqr);
 console.log(cachedSqr(10));
 console.log(cachedSqr(10));
 console.log(cachedSqr(2));
@@ -36,4 +35,12 @@ const convertNumber = x => {
   }
 };
 
-const conver_sqr = convertFn;
+const convertSqr = convetFn => x => {
+  const y = convetFn(x);
+  return y * y;
+};
+
+const numberSqr = convertSqr(convertNumber);
+console.log(numberSqr(10));
+console.log(numberSqr('asd'));
+console.log(numberSqr('25'));
