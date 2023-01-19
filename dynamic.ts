@@ -9,21 +9,13 @@ const factorial = (num: number): number => {
 // console.log(factorial(5));
 
 // 동적 프로그래밍 - 동적 계획법 / 메모리에 기억하기
-const cache = (fn: Function) => {
-  const saved = new Map();
-  return (num: number) => {
-    if (saved.has(num)) {
-      return saved.get(num);
-    }
+const memo = (fn: Function) => {
+  const cache: { [k: string]: any } = {};
 
-    const result = fn(num);
-    saved.set(num, result);
-
-    return result;
-  };
+  return (arg: any) => (cache[arg] ? undefined : (cache[arg] = fn(arg)));
 };
 
-const fac = cache(factorial);
+const fac = memo(factorial);
 
 console.log(fac(5));
 console.log(fac(6));
