@@ -19,3 +19,24 @@ const fac = memo(factorial);
 
 console.log(fac(5));
 console.log(fac(6));
+
+// 1 1 2 3 4
+const fibonacci = (() => {
+  const cache: { [k: string]: any } = {};
+
+  return (num: number): number => {
+    if (num < 2) {
+      return 1;
+    }
+
+    const result1 = cache[num - 1] ?? (cache[num - 1] = fibonacci(num - 1));
+    const result2 = cache[num - 2] ?? (cache[num - 2] = fibonacci(num - 2));
+
+    console.log(cache);
+
+    return result1 + result2;
+  };
+})();
+
+console.log(fibonacci(21));
+console.log(fibonacci(22));
