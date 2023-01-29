@@ -4,7 +4,7 @@ const curry =
   (...args: T[]) =>
     fn(arg1, ...args);
 
-const add = (a: number, b: number) => a + b;
+export const add = (a: number, b: number) => a + b;
 
 const add10 = curry(add)(10);
 console.log(add10(5)); // 15
