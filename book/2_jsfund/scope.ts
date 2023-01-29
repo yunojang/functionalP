@@ -1,6 +1,6 @@
 const num = 1;
 
-function foo() {
+function parent1() {
   const num = 10;
   bar();
 }
@@ -9,4 +9,4 @@ function bar() {
   console.log(num);
 }
 
-foo(); // 1
+parent1(); // 1
