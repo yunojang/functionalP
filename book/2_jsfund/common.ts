@@ -8,8 +8,9 @@ console.log(always10());
 console.log(always10());
 console.log(always10());
 
-const callWith = (v1: any) => (v2: any, func: (...args: any[]) => any) =>
+export const callWith = (v1: any) => (v2: any, func: (...args: any[]) => any) =>
   func(v1, v2);
+
 const callWith10 = callWith(10);
 console.log(callWith10(5, (a: number, b: number) => a + b));
 
