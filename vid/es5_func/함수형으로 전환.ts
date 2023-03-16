@@ -43,6 +43,7 @@ console.log(_map(users2, _bvalue('name')));
 interface Namely {
   name: string;
 }
-const names = <T extends Namely>(list: T[]) => _map(list, _bvalue('name'));
+const map_name = <T extends Namely>(list: T[]) => _map(list, _bvalue('name'));
+console.log(map_name(users2));
 
-console.log(names(users2));
+console.log(_map([1, 2, 3], v => v * 2));
