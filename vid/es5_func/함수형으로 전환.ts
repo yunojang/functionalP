@@ -1,3 +1,5 @@
+import { _filter, _map } from '../../utils/_';
+
 const users2 = [
   { name: 'man_a', age: 30 },
   { name: 'man_b', age: 29 },
@@ -6,30 +8,8 @@ const users2 = [
   { name: 'man_c', age: 39 },
 ];
 
-const _filter = <T>(list: T[], predicate: (v: T) => boolean) => {
-  const result = [];
-
-  for (const item of list) {
-    if (predicate(item)) {
-      result.push(item);
-    }
-  }
-
-  return result;
-};
-
 console.log(_filter(users2, user => user.age >= 30));
 console.log(_filter(users2, user => user.age < 30));
-
-const _map = <T>(list: T[], iteratee: (v: T) => any) => {
-  const result = [];
-
-  for (const item of list) {
-    result.push(iteratee(item));
-  }
-
-  return result;
-};
 
 console.log(_map(users2, user => user.age));
 
