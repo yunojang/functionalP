@@ -14,6 +14,7 @@ const sub = _curryr((a: number, b: number) => a - b);
 const sub5 = sub(5);
 console.log(sub5(10));
 
+// _curryr로 만들어진 _bvalue 활용
 console.log(
   _map(
     _filter(users, user => user.age >= 30),

@@ -1,35 +1,3 @@
-export const _filter = <T>(
-  list: ArrayLike<T>,
-  predicate: (v: T) => boolean
-) => {
-  const result: T[] = [];
-
-  _each(list, v => {
-    if (predicate(v)) result.push(v);
-  });
-
-  return result;
-};
-
-export const _map = <T, U>(list: ArrayLike<T>, mapper: (v: T) => U) => {
-  const result: U[] = [];
-
-  _each(list, v => result.push(mapper(v)));
-
-  return result;
-};
-
-export const _each = <T>(
-  list: ArrayLike<T>,
-  iter: (v: T, idx: number) => void
-) => {
-  for (let i = 0; i < list.length; i++) {
-    iter(list[i], i);
-  }
-
-  return list;
-};
-
 export const _curry =
   (fn: (...args: any[]) => any) =>
   (...argsA: any[]) =>
@@ -42,6 +10,37 @@ export const _curryr =
 
 export const _get = <T extends object>(obj: T, key: keyof T) =>
   obj ? obj[key] : obj;
+
+export const _filter = _curryr(
+  <T>(list: ArrayLike<T>, predicate: (v: T) => boolean) => {
+    const result: T[] = [];
+
+    _each(list, v => {
+      if (predicate(v)) result.push(v);
+    });
+
+    return result;
+  }
+);
+
+export const _map = _curryr(<T, U>(list: ArrayLike<T>, mapper: (v: T) => U) => {
+  const result: U[] = [];
+
+  _each(list, v => result.push(mapper(v)));
+
+  return result;
+});
+
+export const _each = <T>(
+  list: ArrayLike<T>,
+  iter: (v: T, idx: number) => void
+) => {
+  for (let i = 0; i < list.length; i++) {
+    iter(list[i], i);
+  }
+
+  return list;
+};
 
 // export const _bvalue = _curryr(_get);
 
@@ -78,7 +77,11 @@ export function _reduce<T, U>(
   return initial;
 }
 
-// define
-// reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T;
-// reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue: T): T;
-// reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
+// 인자로 받은 함수를 연속 실행하는 함수를 리턴
+// type PureFunction = (v: any) => any;
+export const _pipe =
+  <T>(...fns: Function[]) =>
+  (arg: T) =>
+    _reduce(fns, (acc, fn) => fn(acc), arg);
+
+export const _go = <T>(arg: T, ...fns: Function[]) => _pipe(...fns)(arg);
