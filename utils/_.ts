@@ -19,9 +19,12 @@ export const _map = <T, U>(list: ArrayLike<T>, mapper: (v: T) => U) => {
   return result;
 };
 
-export const _each = <T>(list: ArrayLike<T>, iter: (v: T) => void) => {
+export const _each = <T>(
+  list: ArrayLike<T>,
+  iter: (v: T, idx: number) => void
+) => {
   for (let i = 0; i < list.length; i++) {
-    iter(list[i]);
+    iter(list[i], i);
   }
 
   return list;
@@ -47,16 +50,35 @@ export const _bvalue =
   (obj: T) =>
     obj[key];
 
-export const _reduce = <T, U>(
-  list: T[],
-  accumulate: (acc: U, cur: T) => U,
-  memo: U
-) => {
-  let result = memo;
-
-  for (const item of list) {
-    result = accumulate(result, item);
+export function _reduce<T>(
+  list: ArrayLike<T>,
+  accumulate: (previous: T, current: T, currentIndex: number) => T
+): T;
+export function _reduce<T>(
+  list: ArrayLike<T>,
+  accumulate: (previous: T, current: T, currentIndex: number) => T,
+  initial: T
+): T;
+export function _reduce<T, U>(
+  list: ArrayLike<T>,
+  accumulate: (previous: U, current: T, currentIndex: number) => U,
+  initial: U
+): T;
+export function _reduce<T, U>(
+  list: ArrayLike<T>,
+  accumulate: (prev: T | U, cur: T, idx: number) => T | U,
+  initial?: T | U
+) {
+  if (initial === undefined) {
+    initial = list[0];
+    list = Array.prototype.slice.call(list, 1);
   }
 
-  return result;
-};
+  _each(list, (v, idx) => (initial = accumulate(initial!, v, idx)));
+  return initial;
+}
+
+// define
+// reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T): T;
+// reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue: T): T;
+// reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
