@@ -46,3 +46,17 @@ export const _bvalue =
   <T extends object>(key: keyof T) =>
   (obj: T) =>
     obj[key];
+
+export const _reduce = <T, U>(
+  list: T[],
+  accumulate: (acc: U, cur: T) => U,
+  memo: U
+) => {
+  let result = memo;
+
+  for (const item of list) {
+    result = accumulate(result, item);
+  }
+
+  return result;
+};
