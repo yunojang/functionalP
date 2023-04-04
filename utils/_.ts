@@ -27,6 +27,21 @@ export const _each = <T>(list: ArrayLike<T>, iter: (v: T) => void) => {
   return list;
 };
 
+export const _curry =
+  (fn: (...args: any[]) => any) =>
+  (...argsA: any[]) =>
+    argsA.length >= 2 ? fn(...argsA) : (argB: any) => fn(...argsA, argB);
+
+export const _curryr =
+  (fn: (...args: any[]) => any) =>
+  (...argsA: any[]) =>
+    argsA.length >= 2 ? fn(...argsA) : (b: any) => fn(b, ...argsA);
+
+export const _get = <T extends object>(obj: T, key: keyof T) =>
+  obj ? obj[key] : obj;
+
+// export const _bvalue = _curryr(_get);
+
 export const _bvalue =
   <T extends object>(key: keyof T) =>
   (obj: T) =>
