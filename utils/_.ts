@@ -31,23 +31,23 @@ export const _map = _curryr(<T, U>(list: ArrayLike<T>, mapper: (v: T) => U) => {
   return result;
 });
 
-export const _each = <T>(
-  list: ArrayLike<T>,
-  iter: (v: T, idx: number) => void
-) => {
-  for (let i = 0; i < list.length; i++) {
-    iter(list[i], i);
+export const _bvalue =
+  <T extends object>(key: keyof T) =>
+  (obj: T) =>
+    obj[key];
+
+const _length = _curryr(_get)('length');
+
+export const _each = <T>(list: T, iter: (v: T, idx: number) => void) => {
+  const keys = _keys(list);
+  for (let i = 0, len = keys.length; i < len; i++) {
+    iter(list[keys[i]], i);
   }
 
   return list;
 };
 
 // export const _bvalue = _curryr(_get);
-
-export const _bvalue =
-  <T extends object>(key: keyof T) =>
-  (obj: T) =>
-    obj[key];
 
 export function _reduce<T>(
   list: ArrayLike<T>,
@@ -85,3 +85,8 @@ export const _pipe =
     _reduce(fns, (acc, fn) => fn(acc), arg);
 
 export const _go = <T>(arg: T, ...fns: Function[]) => _pipe(...fns)(arg);
+
+export const _isObject = (obj: any): boolean =>
+  typeof obj === 'object' && !!obj;
+
+export const _keys = (v: any) => (_isObject(v) ? Object.keys(v) : []);
