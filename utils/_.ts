@@ -90,3 +90,11 @@ export const _isObject = (obj: any): boolean =>
   typeof obj === 'object' && !!obj;
 
 export const _keys = (v: any) => (_isObject(v) ? Object.keys(v) : []);
+
+export const _values = _map(_identity);
+
+export const _plunk = <T>(list: T[], key: keyof T) => _map(list, _bvalue(key));
+
+export function _identity<T>(v: T) {
+  return v;
+}
