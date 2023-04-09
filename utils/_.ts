@@ -11,19 +11,17 @@ export const _curryr =
 export const _get = <T extends object>(obj: T, key: keyof T) =>
   obj ? obj[key] : obj;
 
-export const _filter = _curryr(
-  <T>(list: ArrayLike<T>, predicate: (v: T) => boolean) => {
-    const result: T[] = [];
+export const _filter = _curryr(<T>(list: T, predicate: (v: T) => boolean) => {
+  const result: T[] = [];
 
-    _each(list, v => {
-      if (predicate(v)) result.push(v);
-    });
+  _each(list, v => {
+    if (predicate(v)) result.push(v);
+  });
 
-    return result;
-  }
-);
+  return result;
+});
 
-export const _map = _curryr(<T, U>(list: ArrayLike<T>, mapper: (v: T) => U) => {
+export const _map = _curryr(<T, U>(list: T, mapper: (v: T) => U) => {
   const result: U[] = [];
 
   _each(list, v => result.push(mapper(v)));
@@ -98,3 +96,12 @@ export const _plunk = <T>(list: T[], key: keyof T) => _map(list, _bvalue(key));
 export function _identity<T>(v: T) {
   return v;
 }
+
+export function _negate(func: Function) {
+  return (...args: any[]) => !func(...args);
+}
+
+export const _reject = <T>(list: T, predi: (v: any) => boolean) =>
+  _filter(list, _negate(predi));
+
+export const _compact = _filter(_identity);
