@@ -1,15 +1,20 @@
 import {
-  _bvalue,
   _compact,
   _every,
   _filter,
   _find,
   _find_index,
+  _get,
   _go,
   _identity,
   _keys,
   _map,
+  _max,
+  _max_by,
+  _min,
+  _min_by,
   _plunk,
+  _reduce,
   _reject,
   _some,
   _values,
@@ -34,3 +39,19 @@ console.log(_find_index(users, user => user.id === 4));
 
 _go([0, 1, 2, null], _some(_identity), console.log);
 _go([1, 2], _every(_identity), console.log);
+
+// 접기
+_go(users, _plunk('age'), _max, console.log);
+_go(users, _plunk('age'), _min, console.log);
+
+_go(
+  users,
+  _min_by(u => u.age),
+  console.log
+);
+
+_go(
+  users,
+  _max_by(u => u.age),
+  console.log
+);

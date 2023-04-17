@@ -3,13 +3,15 @@ export const _curry =
   (...argsA: any[]) =>
     argsA.length >= 2 ? fn(...argsA) : (argB: any) => fn(...argsA, argB);
 
-export const _curryr =
-  (fn: (...args: any[]) => any) =>
-  (...argsA: any[]) =>
-    argsA.length >= 2 ? fn(...argsA) : (b: any) => fn(b, ...argsA);
+export const _curryr = (fn: (...args: any[]) => any) => {
+  const argLen = fn.length;
+  return (...argsA: any[]) =>
+    argsA.length >= argLen ? fn(...argsA) : (b: any) => fn(b, ...argsA);
+};
 
-export const _get = <T extends object>(obj: T, key: keyof T) =>
-  obj ? obj[key] : obj;
+export const _get = _curryr(<T extends object>(obj: T, key: keyof T) =>
+  obj ? obj[key] : obj
+);
 
 export const _filter = _curryr(<T>(list: T, predicate: (v: T) => boolean) => {
   const result: T[] = [];
@@ -29,11 +31,6 @@ export const _map = _curryr(<T, U>(list: T, mapper: (v: T) => U) => {
   return result;
 });
 
-export const _bvalue =
-  <T extends object>(key: keyof T) =>
-  (obj: T) =>
-    obj[key];
-
 const _length = _curryr(_get)('length');
 
 export const _each = <T>(
@@ -51,26 +48,11 @@ export const _each = <T>(
 };
 
 // export const _bvalue = _curryr(_get);
-
-export function _reduce<T>(
-  list: ArrayLike<T>,
-  accumulate: (previous: T, current: T, currentIndex: number) => T
-): T;
-export function _reduce<T>(
-  list: ArrayLike<T>,
-  accumulate: (previous: T, current: T, currentIndex: number) => T,
-  initial: T
-): T;
-export function _reduce<T, U>(
-  list: ArrayLike<T>,
-  accumulate: (previous: U, current: T, currentIndex: number) => U,
-  initial: U
-): T;
-export function _reduce<T, U>(
-  list: ArrayLike<T>,
+export const _reduce = <T, U>(
+  list: Iterable<T>,
   accumulate: (prev: T | U, cur: T, idx: number) => T | U,
   initial?: T | U
-) {
+) => {
   if (initial === undefined) {
     initial = list[0];
     list = Array.prototype.slice.call(list, 1);
@@ -78,7 +60,7 @@ export function _reduce<T, U>(
 
   _each(list, (v, idx) => (initial = accumulate(initial!, v, idx)));
   return initial;
-}
+};
 
 // 인자로 받은 함수를 연속 실행하는 함수를 리턴
 // type PureFunction = (v: any) => any;
@@ -96,7 +78,9 @@ export const _keys = (v: any) => (_isObject(v) ? Object.keys(v) : []);
 
 export const _values = _map(_identity);
 
-export const _plunk = <T>(list: T[], key: keyof T) => _map(list, _bvalue(key));
+export const _plunk = _curryr(<T>(list: T[], key: keyof T) =>
+  _map(list, _get(key))
+);
 
 export function _identity<T>(v: T) {
   return v;
@@ -106,8 +90,9 @@ export function _negate(func: Function) {
   return (...args: any[]) => !func(...args);
 }
 
-export const _reject = <T>(list: T, predi: (v: any) => boolean) =>
-  _filter(list, _negate(predi));
+export const _reject = _curryr(<T>(list: T, predi: (v: any) => boolean) =>
+  _filter(list, _negate(predi))
+);
 
 export const _compact = _filter(_identity);
 
@@ -141,9 +126,23 @@ export const _some = _curryr(
     _find_index(data, predi) !== -1
 );
 
-type AnyFuntion = (...args: any[]) => any;
-
 export const _every = _curryr(
   <T>(data: Iterable<T>, predi: (v: T) => boolean) =>
     _find_index(data, _negate(predi)) === -1
+);
+
+export const _max = <T>(data: Iterable<T>) =>
+  _reduce(data, (a, b) => (a > b ? a : b));
+
+export const _max_by = _curryr(
+  <T>(data: Iterable<T>, predi: (v: T) => number | string) =>
+    _reduce(data, (a, b) => (predi(a) > predi(b) ? a : b))
+);
+
+export const _min = <T>(data: Iterable<T>) =>
+  _reduce(data, (a, b) => (a < b ? a : b));
+
+export const _min_by = _curryr(
+  <T>(data: Iterable<T>, predi: (v: T) => number | string) =>
+    _reduce(data, (a, b) => (predi(a) < predi(b) ? a : b))
 );
