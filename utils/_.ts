@@ -36,8 +36,13 @@ export const _bvalue =
 
 const _length = _curryr(_get)('length');
 
-export const _each = <T>(list: T, iter: (v: T, idx: number) => void) => {
+export const _each = <T>(
+  list: Iterable<T>,
+  iter: (v: T, idx: number) => unknown
+) => {
   const keys = _keys(list);
+
+  // list 이터러블로 만든 제너레이터 반복?
   for (let i = 0, len = keys.length; i < len; i++) {
     iter(list[keys[i]], i);
   }
@@ -105,3 +110,40 @@ export const _reject = <T>(list: T, predi: (v: any) => boolean) =>
   _filter(list, _negate(predi));
 
 export const _compact = _filter(_identity);
+
+// 해당값을 처음 만날 때 리턴 - Iterable<T> -> 이터러블이 아니라도 처리하고싶지만 그런 경우는 잘 없긴함 = 저렇게 해야 처리가능...
+export const _find = _curryr(
+  <T>(data: Iterable<T>, predi: (v: T) => unknown) => {
+    const keys = _keys(data);
+
+    for (let i = 0, len = keys.length; i < len; i++) {
+      const v = data[keys[i]];
+      if (predi(v)) return v;
+    }
+  }
+);
+
+export const _find_index = _curryr(
+  <T>(data: Iterable<T>, predi: (v: T) => unknown) => {
+    const keys = _keys(data);
+
+    for (let i = 0, len = keys.length; i < len; i++) {
+      const v = data[keys[i]];
+      if (predi(v)) return i;
+    }
+
+    return -1;
+  }
+);
+
+export const _some = _curryr(
+  <T>(data: Iterable<T>, predi: (v: T) => boolean) =>
+    _find_index(data, predi) !== -1
+);
+
+type AnyFuntion = (...args: any[]) => any;
+
+export const _every = _curryr(
+  <T>(data: Iterable<T>, predi: (v: T) => boolean) =>
+    _find_index(data, _negate(predi)) === -1
+);
